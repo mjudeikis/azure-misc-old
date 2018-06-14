@@ -1,0 +1,35 @@
+hash: 14fa4bd606c1afb6acd34c410b28cc9f701a7279f886b8cfdefff0d00245978f
+updated: 2018-06-14T08:54:22.181516465-05:00
+imports:
+- name: github.com/Azure/azure-sdk-for-go
+  version: 514bddd77de93dd0349ada5fbe250077ddc619ff
+  subpackages:
+  - services/compute/mgmt/2018-04-01/compute
+  - services/resources/mgmt/2018-02-01/resources
+  - services/storage/mgmt/2017-10-01/storage
+  - storage
+  - version
+- name: github.com/Azure/go-autorest
+  version: 4de44cd533576f3c7b44dcb08dc03754d217144d
+  subpackages:
+  - autorest
+  - autorest/adal
+  - autorest/azure
+  - autorest/azure/auth
+  - autorest/date
+  - autorest/to
+  - autorest/validation
+- name: github.com/dgrijalva/jwt-go
+  version: 06ea1031745cb8b3dab3f6a236daf2b0aa468b7e
+- name: github.com/dimchansky/utfbom
+  version: 6c6132ff69f0f6c088739067407b5d32c52e1d0f
+- name: github.com/marstr/guid
+  version: 8bdf7d1a087ccc975cf37dd6507da50698fd19ca
+- name: github.com/satori/go.uuid
+  version: 36e9d2ebbde5e3f13ab2e25625fd453271d6522e
+- name: golang.org/x/crypto
+  version: 81e90905daefcd6fd217b62423c0908922eadb30
+  subpackages:
+  - pkcs12
+  - pkcs12/internal/rc2
+testImports: []
