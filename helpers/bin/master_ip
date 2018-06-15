@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+RESOURCE_GROUP=$1
+
+az network public-ip  list --resource-group $RESOURCE_GROUP --query "[?starts_with(name, 'ocp-master')].ipAddress" 2>/dev/null | jq -r '.[]'
+
