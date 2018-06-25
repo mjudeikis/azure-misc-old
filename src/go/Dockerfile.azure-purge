@@ -1,12 +1,8 @@
-FROM golang:1.10-alpine
+FROM golang:1.10-alpine AS build-env
 
 ENV GLIDE_VERSION 0.12.3
 ENV GLIDE_DOWNLOAD_URL https://github.com/Masterminds/glide/releases/download/v${GLIDE_VERSION}/glide-v${GLIDE_VERSION}-linux-amd64.tar.gz
 ENV GOPATH=/go
-ENV AZURE_CLIENT_ID foo
-ENV AZURE_CLIENT_SECRET bar
-ENV AZURE_TENANT_ID foo
-ENV AZURE_SUBSCRIPTION_ID bar
 
 RUN apk add --update ca-certificates \
     && apk add curl git coreutils make \
@@ -25,4 +21,8 @@ RUN ls -la /go/src/github.com/azure-purge
 RUN cd /go/src/github.com/azure-purge && \
     make
 
-ENTRYPOINT [ "./cmd/azure-purge/main" ]
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+COPY --from=build-env /go/src/github.com/azure-purge/cmd/azure-purge/azure-purge /usr/local/bin/azure-purge
+
+ENTRYPOINT [ "azure-purge" ]
