@@ -1,5 +1,26 @@
 #!/usr/bin/bash
 
 RESOURCE_GROUP=$1
+SSH_KEY=$2
+SSH_OPT="-oStrictHostKeyChecking=no"
 
-ssh -i ~/Downloads/jimssh/id_rsa cloud-user@$(az network public-ip  list --resource-group $RESOURCE_GROUP --query "[?starts_with(name, 'ocp-master')].ipAddress" 2>/dev/null | jq -r '.[]')
+if [[ -z "$RESOURCE_GROUP" ]]; then
+    RESOURCE_GROUP=cluster_name
+	echo $RESOURCE_GROUP
+fi
+
+if [[ -z "$SSH_KEY" ]]; then
+    SSH_KEY=${GOPATH}/src/github.com/Azure/acs-engine/_output/$RESOURCE_GROUP-ssh
+    echo $SSH_KEY  
+fi
+
+IP=$(az network public-ip  list --resource-group $RESOURCE_GROUP --query "[?starts_with(name, 'ocp-master')].ipAddress" 2>/dev/null | jq -r '.[]')
+
+#get my ssh key over for not exposed node ssh
+if [[ "$IP" ]]; then
+	scp -i $SSH_KEY $SSH_OPT $SSH_KEY cloud-user@$IP:/home/cloud-user/.ssh/id_rsa
+	ssh -i $SSH_KEY $SSH_OPT cloud-user@$IP 'chmod 600 /home/cloud-user/.ssh/id_rsa'
+	ssh -i $SSH_KEY $SSH_OPT cloud-user@$IP
+else
+    echo "ip address not resoved"
+fi
