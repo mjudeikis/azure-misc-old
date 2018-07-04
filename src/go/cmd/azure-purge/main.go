@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Azure/azure-sdk-for-go/services/compute/mgmt/2018-04-01/compute"
@@ -43,7 +44,13 @@ var clients = struct {
 
 var now = time.Now()
 
+var envList = []string{"AZURE_SUBSCRIPTION_ID", "AZURE_CLIENT_ID", "AZURE_CLIENT_SECRET", "AZURE_TENANT_ID"}
+
 func getClients() error {
+	err := checkEnvConfig()
+	if err != nil {
+		return err
+	}
 	subscriptionID := os.Getenv("AZURE_SUBSCRIPTION_ID")
 
 	authorizer, err := auth.NewAuthorizerFromEnvironment()
@@ -68,6 +75,20 @@ func getClients() error {
 		return err
 	}
 
+	return nil
+}
+
+func checkEnvConfig() error {
+	var errstrings []string
+	for _, env := range envList {
+		_, ok := os.LookupEnv(env)
+		if ok == false {
+			errstrings = append(errstrings, error.Error(fmt.Errorf("%s not set", env)))
+		}
+	}
+	if len(errstrings) > 0 {
+		return fmt.Errorf(strings.Join(errstrings, "\n"))
+	}
 	return nil
 }
 
@@ -286,6 +307,7 @@ func purgeGroups() error {
 }
 
 func run() error {
+	fmt.Printf("Start azure-purge\n")
 	if err := getClients(); err != nil {
 		return err
 	}
